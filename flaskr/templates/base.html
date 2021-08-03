@@ -1,27 +1,25 @@
+
 <!doctype html>
-<!-- <nav>
-  <h1>Flaskr</h1>
-  <ul>
-    {% if g.user %}
-      <li><span>{{ g.user['username'] }}</span>
-      <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
-    {% else %}
-      <li><a href="{{ url_for('auth.register') }}">Register</a>
-      <li><a href="{{ url_for('auth.login') }}">Log In</a>
-    {% endif %}
-  </ul>
-</nav> -->
-<title>{% block title %}{% endblock %} - Flaskr</title>
-<head>
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>{% block title %}{% endblock %} - Sign-in</title>
+    <!-- CSS files -->
+    <link href="{{ url_for('static', filename='dist/css/tabler.min.css')}}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='dist/css/tabler-flags.min.css')}}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='dist/css/tabler-payments.min.css')}}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='dist/css/tabler-vendors.min.css')}}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='dist/css/demo.min.css')}}" rel="stylesheet"/>
     {% block header %}{% endblock %}
-</head>
+  </head>
 {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>
 {% endfor %}
-<body>
+<body class="antialiased border-top-wide border-primary d-flex flex-column">
   {% block content %}{% endblock %}
+  <script src="{{ url_for('static', filename='dist/js/tabler.min.js')}}"></script>
+  {% block scripts %}{% endblock %}
 </body>
+</html>

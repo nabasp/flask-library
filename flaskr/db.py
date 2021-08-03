@@ -15,6 +15,18 @@ def get_db():
 
     return g.db
 
+def get_db_dict():
+    db = sqlite3.connect(current_app.config['DATABASE'])
+    db.row_factory = dict_factory
+    cur = db.cursor()   
+    return cur
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
 
 def close_db(e=None):
     db = g.pop('db', None)

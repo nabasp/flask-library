@@ -12,7 +12,7 @@
           <h3 class="card-title">Create New Member</h3>
         </div>
         <div class="card-body">
-          <form>
+          <form method="POST">
             <div class="form-group mb-3 row">
               <label class="form-label col-3 col-form-label">Name</label>
               <div class="col">
@@ -48,7 +48,7 @@
               <div class="col">
                 <div class="form-selectgroup">
                   <label class="form-selectgroup-item">
-                    <input type="radio" id="gender" name="gender" value="home" class="form-selectgroup-input" checked="">
+                    <input type="radio" id="gender" name="gender" value="m" class="form-selectgroup-input" checked="">
                     <span class="form-selectgroup-label">
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-man" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -58,7 +58,7 @@
                        Male</span>
                   </label>
                   <label class="form-selectgroup-item">
-                    <input type="radio" id="gender" name="gender" value="user" class="form-selectgroup-input">
+                    <input type="radio" id="gender" name="gender" value="f" class="form-selectgroup-input">
                     <span class="form-selectgroup-label">
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-woman" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -68,7 +68,7 @@
                       Female</span>
                   </label>
                   <label class="form-selectgroup-item">
-                    <input type="radio" id="gender" name="gender" value="circle" class="form-selectgroup-input">
+                    <input type="radio" id="gender" name="gender" value="o" class="form-selectgroup-input">
                     <span class="form-selectgroup-label">
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle></svg>
                       Other</span>
@@ -106,7 +106,7 @@
   // @formatter:off
   document.addEventListener("DOMContentLoaded", function () {
     window.Litepicker && (new Litepicker({
-      element: document.getElementById('datepicker-icon-prepend'),
+      element: document.getElementById('dob'),
       buttonText: {
         previousMonth: '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>',
         nextMonth: '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>',

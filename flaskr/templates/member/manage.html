@@ -34,7 +34,7 @@
               <thead>
                 <tr>
                   <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select all invoices"></th>
-                  <th class="w-1">No. <!-- Download SVG icon from http://tabler-icons.io/i/chevron-up -->
+                  <th class="w-1">Id. <!-- Download SVG icon from http://tabler-icons.io/i/chevron-up -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm text-dark icon-thick" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="6 15 12 9 18 15" /></svg>
                   </th>
                   <th>Name</th>
@@ -48,38 +48,48 @@
                 </tr>
               </thead>
               <tbody>
+                {% for member in members_list %}
                 <tr>
                   <td><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select invoice"></td>
-                  <td><span class="text-muted">001401</span></td>
-                  <td><a href="invoice.html" class="text-reset" tabindex="-1">Design Works</a></td>
+                  <td><span class="text-muted">{{ member['id'] }}</span></td>
+                  <td><a href="invoice.html" class="text-reset" tabindex="-1">{{ member['name'] }}</a></td>
                   <td>
-                    <span class="flag flag-country-us"></span>
-                    Carlson Limited
+                    {{ member['email'] }}
                   </td>
                   <td>
-                    87956621
+                    {{ member['phone'] }}
                   </td>
                   <td>
-                    15 Dec 2017
+                    {{ member['dob'] }}
                   </td>
                   <td>
-                    <span class="badge bg-success me-1"></span> Paid
+                    {{ member['gender'] }}
                   </td>
-                  <td>$887</td>
+                  <td>
+                    {% if member['status'] %}
+                      <span class="badge bg-success me-1"></span>Active</span>
+                    {% else %}
+                      <span class="badge bg-red me-1"></span>Inactive</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {{ member['created_at'] }}
+                  </td>
                   <td class="text-end">
                     <span class="dropdown">
                       <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
                       <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="#">
-                          Action
+                        <a id="edit-member" data-memberId="{{member['id']}}" class="dropdown-item" href="#" class="btn btn-white" data-bs-toggle="modal" data-bs-target="#modal-member-edit">
+                          Edit
                         </a>
-                        <a class="dropdown-item" href="#">
-                          Another action
+                        <a id="delete-member" data-memberId="{{member['id']}}" href="#" class="dropdown-item" class="btn btn-white" data-bs-toggle="modal" data-bs-target="#modal-danger">
+                          Delete
                         </a>
                       </div>
                     </span>
                   </td>
                 </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
@@ -111,4 +121,183 @@
     </div>
   </div>
 </div>
+
+<div class="modal modal-blur fade" id="modal-danger" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-status bg-danger"></div>
+      <div class="modal-body text-center py-4">
+        <!-- Download SVG icon from http://tabler-icons.io/i/alert-triangle -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v2m0 4v.01" /><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" /></svg>
+        <h3>Are you sure?</h3>
+        <div class="text-muted">Do you really want to remove this member? What you've done cannot be undone.</div>
+      </div>
+      <div class="modal-footer">
+        <div class="w-100">
+          <div class="row">
+            <div class="col"><botton class="btn btn-white w-100" data-bs-dismiss="modal">
+                Cancel
+              </botton></div>
+            <div class="col">
+              <form action="{{ url_for('member.delete')}}" method="post">
+                <input type="hidden" id="delMemberId" name="delMemberId">
+                <input class="btn btn-danger w-100"  type="submit" value="Delete">
+              </form>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal modal-blur fade" id="modal-member-edit" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Update Member</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <form id="member-edit-form" method="POST" action="{{ url_for('member.update') }}">
+          <input type="hidden" id="memberId" name="memberId" value="">
+          <div class="modal-body">
+              <div class="form-group mb-3 row">
+                <label class="form-label col-3 col-form-label">Name</label>
+                <div class="col">
+                  <input id="name" name="name" type="text" class="form-control" placeholder="Enter Name">
+                </div>
+              </div>
+              <div class="form-group mb-3 row">
+                <label class="form-label col-3 col-form-label">Phone number</label>
+                <div class="col">
+                  <input id="phone" name="phone" type="tel" class="form-control" autocomplete="off">
+                </div>
+              </div>
+              <div class="form-group mb-3 row">
+                <label class="form-label col-3 col-form-label">Email address</label>
+                <div class="col">
+                  <input id="email" name="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
+                  <small class="form-hint">We'll never share your email with anyone else.</small>
+                </div>
+              </div>
+              <div class="form-group mb-3 row">
+                <label class="form-label col-3 col-form-label">Date Of Birth</label>
+                <div class="col">
+                  <div class="input-icon">
+                    <span class="input-icon-addon"><!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><rect x="4" y="5" width="16" height="16" rx="2"></rect><line x1="16" y1="3" x2="16" y2="7"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="4" y1="11" x2="20" y2="11"></line><line x1="11" y1="15" x2="12" y2="15"></line><line x1="12" y1="15" x2="12" y2="18"></line></svg>
+                    </span>
+                    <input id="dob" name="dob" class="form-control" placeholder="Select a date" id="datepicker-icon-prepend" >
+                  </div>
+                </div>
+              </div>
+              <div class="form-group mb-3 row">
+                <label class="form-label col-3 col-form-label">Gender</label>
+                <div class="col">
+                  <div class="form-selectgroup">
+                    <label class="form-selectgroup-item">
+                      <input type="radio" id="gender" name="gender" value="m" class="form-selectgroup-input" checked="">
+                      <span class="form-selectgroup-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-man" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                          <circle cx="12" cy="5" r="2"></circle>
+                          <path d="M10 22v-5l-1 -1v-4a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4l-1 1v5"></path>
+                      </svg>
+                        Male</span>
+                    </label>
+                    <label class="form-selectgroup-item">
+                      <input type="radio" id="gender" name="gender" value="f" class="form-selectgroup-input">
+                      <span class="form-selectgroup-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-woman" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                          <circle cx="12" cy="5" r="2"></circle>
+                          <path d="M10 22v-4h-2l2 -6a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1l2 6h-2v4"></path>
+                      </svg>
+                        Female</span>
+                    </label>
+                    <label class="form-selectgroup-item">
+                      <input type="radio" id="gender" name="gender" value="o" class="form-selectgroup-input">
+                      <span class="form-selectgroup-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle></svg>
+                        Other</span>
+                    </label>
+                  </div>
+                </div>
+                
+              </div>
+              <div class="form-group mb-3 row">
+                <label class="form-label col-3 col-form-label">Address</label>
+                <div class="col">
+                  <textarea class="form-control" id="address" name="address" rows="6" placeholder="Address.."></textarea>
+                </div>
+              </div>
+              <div class="form-group mb-3 row">
+                <label class="form-label col-3 col-form-label">Status</label>
+                <div class="col">
+                  <label class="form-check form-switch">
+                    <input id="status" name="status" class="form-check-input" type="checkbox" checked="">
+                  </label>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+              Cancel
+            </a>
+            <button type="submit" class="btn btn-success ms-auto">
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M5 12l5 5l10 -10"></path>
+             </svg>
+              Save
+            </button>
+          </div>
+        </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='dist/libs/litepicker/dist/litepicker.js')}}"></script>
+<script type=text/javascript>
+  document.addEventListener("DOMContentLoaded", function () {
+    window.Litepicker && (new Litepicker({
+      element: document.getElementById('dob'),
+      buttonText: {
+        previousMonth: '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>',
+        nextMonth: '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>',
+      },
+    }));
+  });
+  SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+  $(function() {
+    $('a#edit-member').bind('click', function() {
+      memberId=$(this).attr("data-memberId");
+      $('#memberId').val(memberId);
+      $.getJSON(SCRIPT_ROOT + memberId +'/edit', function(data) {
+        console.log(data);
+        $("#name").val(data.name);
+        $("#dob").val(data.dob);
+        $("#email").val(data.email);
+        $("#status").prop("checked", data.status?true:false);
+        values =[data.gender];
+        $(".form-selectgroup-item").find('[value=' + values.join('], [value=') + ']').prop("checked", true);
+        
+        $("#phone").val(data.phone);
+        $("#address").val(data.address);
+      });
+      return false;
+    });
+
+    $('a#delete-member').bind('click', function() {
+      memberId=$(this).attr("data-memberId");
+      $('#delMemberId').val(memberId);
+      return false;
+    });
+ 
+  });
+  
+</script>
 {% endblock %}
