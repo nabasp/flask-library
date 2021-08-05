@@ -28,3 +28,22 @@ CREATE TABLE members (
   address TEXT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE books (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  bookID INTEGER,
+  title TEXT NOT NULL,
+  authors TEXT NOT NULL,
+  average_rating FLOAT,
+  isbn TEXT,
+  isbn13 TEXT,
+  language_code TEXT,
+  num_pages INTEGER,
+  ratings_count INTEGER,
+  text_reviews_count INTEGER,
+  publication_date DATE,
+  publisher TEXT NOT NULL,
+  book_count INTEGER,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

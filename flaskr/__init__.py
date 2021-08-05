@@ -45,6 +45,9 @@ def create_app(test_config=None):
 
     from . import member
     app.register_blueprint(member.bp)
+
+    from . import book
+    app.register_blueprint(book.bp)
     
 
 
