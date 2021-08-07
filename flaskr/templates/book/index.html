@@ -1,6 +1,12 @@
 {% extends 'dashboard-base.html' %}
 
 {% block header %}
+<!-- Ladda Stylesheet -->
+<link rel="stylesheet" href="http://lab.hakim.se/ladda/dist/ladda.min.css" />
+<!-- Ladda JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Ladda/1.0.0/spin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Ladda/1.0.0/ladda.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Ladda/1.0.0/ladda-themeless.min.css" />
 <link href='https://fonts.googleapis.com/css?family=Libre Barcode 39' rel='stylesheet'>
 <style>
 .barcode {
@@ -222,7 +228,7 @@ box-shadow: 13px 13px 8px 0px rgba(151, 146, 153,0.6);
     <div class="row">
       {% for book in books %}
       <div class="col-sm-6 col-lg-4">
-          <div class="container">
+          <div class="container" id="book-container" data-bs-toggle="modal" data-bs-target="#modal-team" data-isbn="{{ book.isbn }}">
             <div class="book">
               <div class="front">
                 <div class="cover">
@@ -256,13 +262,235 @@ box-shadow: 13px 13px 8px 0px rgba(151, 146, 153,0.6);
     </div>
   </div>
 </div>
+
+<div class="modal modal-blur fade" id="modal-team" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content" style="border: 1px dotted #2fb344;">
+      <div class="modal-header">
+        <h5 class="modal-title">Import Book <span id="bookId"></span> </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <div class="modal-body">
+          <input type="hidden" id="bookIsbn" name="bookIsbn">
+          <div class="card" id="bookInfo" >
+            <div class="card-body">
+              <table class="table table-vcenter card-table">
+                <thead>
+                  <tr>
+                    <th><strong>Stock info</strong></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><line x1="3" y1="6" x2="3" y2="19"></line><line x1="12" y1="6" x2="12" y2="19"></line><line x1="21" y1="6" x2="21" y2="19"></line></svg>
+                      Tittle
+                    </td>
+                    <td><strong><span id="info-tittle"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><line x1="3" y1="6" x2="3" y2="19"></line><line x1="12" y1="6" x2="12" y2="19"></line><line x1="21" y1="6" x2="21" y2="19"></line></svg>
+                      ISBN
+                    </td>
+                    <td><strong><span id="info-isbn"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><line x1="3" y1="6" x2="3" y2="19"></line><line x1="12" y1="6" x2="12" y2="19"></line><line x1="21" y1="6" x2="21" y2="19"></line></svg>
+                      ISBN13
+                    </td>
+                    <td> <strong><span id="info-isbn13"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2"></path><line x1="12" y1="12" x2="12" y2="12.01"></line><path d="M3 13a20 20 0 0 0 18 0"></path></svg>
+                      Author
+                    </td>
+                    <td> <strong><span id="info-authors"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><polyline points="5 12 3 12 12 3 21 12 19 12"></polyline><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path></svg>
+                      Publisher
+                    </td>
+                    <td><strong><span id="info-publisher"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="11" r="3"></circle><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"></path></svg>
+                      language-code 
+                    </td>
+                    <td><strong><span id="info-language-code" class="flag flag-country-si"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><rect x="4" y="5" width="16" height="16" rx="2"></rect><line x1="16" y1="3" x2="16" y2="7"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="4" y1="11" x2="20" y2="11"></line><line x1="11" y1="15" x2="12" y2="15"></line><line x1="12" y1="15" x2="12" y2="18"></line></svg>
+                      Publication date
+                    </td>
+                    <td><strong><span id="info-publication-date"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 15"></polyline></svg>
+                      Average rating
+                    </td>
+                    <td><strong><span id="info-average-rating"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 15"></polyline></svg>
+                      Number of pages
+                    </td>
+                    <td><strong><span id="info-num-pages"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 15"></polyline></svg>
+                      Ratings count
+                    </td>
+                    <td><strong><span id="info-ratings-count"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 15"></polyline></svg>
+                      Text reviews count
+                    </td>
+                    <td><strong><span id="info-text-reviews-count"></span></strong></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="margin-top:1%;">
+                <div class="mb-3">
+                  <div class="btn-group w-100">
+                    <button type="button" class="btn btn-primary">Stock</button>
+                    <button type="button" class="btn">Available :<span id="info-book-count"></span></button>
+                    <button type="button" class="btn">Total Issued :<span id="info-book-count"></span></button>
+                  </div>
+                </div>
+              </div>
+              
+              
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="form-group mb-3 row">
+                <label class="form-label col-6 col-form-label">How many Books Do you want to import</label>
+                <div class="col">           
+                  <input type="number"  id="import-quantity" name="import-quantity" class="form-control" min="0" max="30">
+                  <small class="form-hint">Minum 1 and maximum 30 books per-import please mention in quantity</small>
+                </div>
+                <div class="col">
+                  <button id="import-book-btn" class="ladda-button" data-color="blue" data-size="sm" data-style="expand-left" >Import</button>
+                </div>
+             </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save & Close</button>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="modal modal-blur fade" id="modal-success" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-status bg-success"></div>
+      <div class="modal-body text-center py-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-green icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2l4 -4"></path></svg>
+        <h3>Import succedeed</h3>
+        <div class="text-muted">Your Import of <strong><span id="book-imported"></span></strong> has been successfully Imported.</div>
+      </div>
+      <div class="modal-footer">
+        <div class="w-100">
+          <div class="row">
+            
+            <div class="col"><a href="#" class="btn btn-success w-100" data-bs-dismiss="modal">
+                Ok
+              </a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 {% block scripts %}
 <script type=text/javascript>
-  
+  SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
   $(function() {
-    
+    $('div#book-container').bind('click', function() {
+      isbn=$(this).attr("data-isbn");
+      fetchBookInfoFromDb(isbn);
+      return false;
+    });
+    $('button#import-book-btn').bind('click', function() {
+      isbn=$('#bookIsbn').val();
+      numberOfBooks=$('#import-quantity').val();
+      importBooksFromServer(isbn,numberOfBooks);
+      return false;
+    });
   });
+
+function fetchBookInfoFromDb(isbn) {
+      $('#bookIsbn').val(isbn);
+      $("#bookId").html(" #New");
+      $("#bookInfo").addClass("d-none");
+      $.getJSON(SCRIPT_ROOT + isbn +'/getBook', function(data) {
+        if(data){
+          $("#bookInfo").removeClass("d-none");
+          $("#bookId").html("<a href='"+SCRIPT_ROOT+data.bookID+"'> #"+data.bookID+"</a>");
+          $('#info-tittle').html(data.title);
+          $('#info-authors').html(data.authors);
+          $('#info-average-rating').html(data.average_rating);
+          $('#info-isbn').html(data.isbn);
+          $('#info-isbn13').html(data.isbn13);
+          $('#info-publication-date').html(data.publication_date);
+          $('#info-publisher').html(data.publisher);
+          $('#info-book-count').html(data.book_count);
+          $('#info-num-pages').html(data.num_pages);
+          $('#info-ratings-count').html(data.ratings_count);
+          $('#info-text-reviews-count').html(data.text_reviews_count);
+        }
+
+        console.log(data);
+      });
+}
+
+function importBooksFromServer(isbn,numberOfBooks) {
+  var l = Ladda.create( document.getElementById( 'import-book-btn' ) );
+l.start(); // Start Progress bar
+
+  let url =SCRIPT_ROOT + isbn +'/importBook';
+  let dataType;
+  var data = { numberOfBooks: numberOfBooks };
+  $.ajax({
+  type: "POST",
+  url: url,
+  data: data,
+  success: function(result) {
+    console.log(result)
+    if(result.code==200){
+    $('#book-imported').html(numberOfBooks);
+    $('#modal-success').modal('show');
+    fetchBookInfoFromDb(isbn)
+    }else{
+      alert("Error, "+result.message);
+    }
+  },
+  dataType: dataType
+}).always(
+            function() {
+              l.stop(); // Stop Progress bar
+            }
+    );
+
+}
+  
   
 </script>
 {% endblock %}

@@ -63,16 +63,14 @@ def create():
 
     return render_template('book/create.html')
 
-def get_member(id):
-    member = get_db_dict().execute(
-        'SELECT id,name,status,phone,email,dob,gender,address,created_at'
-        ' FROM members'
-        ' WHERE id = ?',
-        (id,)
-    ).fetchall()
-    if member is not None:
-        member=member[0]
-    return member
+def get_book(key,value):
+    book=None
+    
+    if(key):
+        sql = 'SELECT * FROM books WHERE ' + key + ' = ?'
+        book = get_db_dict().execute(sql,(value,)).fetchone()
+
+    return book
 def get_members():
     db = get_db()
     members = db.execute(
@@ -121,10 +119,75 @@ def delete():
     db.commit()
     return redirect(url_for('book.manage'))
 
-@bp.route('/<int:id>/edit')
+@bp.route('/<string:isbn>/getBook')
 @login_required
-def getMemberAjax(id):
-    
-    member = get_member(id)
+def getBookAjax(isbn):
+    filter = {'key':'isbn', 'value': isbn}
+    book = get_book(**filter)
        
-    return jsonify(member)
+    return jsonify(book)
+
+
+def updateBookData(id,keys,values):
+
+    if id:
+        sql = 'UPDATE books SET '+ keys + ' WHERE id = ?'
+        db = get_db()
+        db.execute(sql,(values,id))
+        db.commit()
+        return True
+
+    return False
+
+def insertBookData(keys,values):
+
+    sql = 'INSERT INTO books ('+ keys + ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    db = get_db()
+    db.execute(sql,(values))
+    db.commit()
+
+    return True     
+
+@bp.route('/<string:isbn>/importBook',methods=('POST',))
+@login_required
+def importBookAjax(isbn):
+    
+    book = None
+    apiResponseData = None
+    result = {'code' : '400' , 'message': 'Error, Method Not Allowed'}
+    if request.method == 'POST':
+        filter = {'key':'isbn', 'value': isbn}
+        book = get_book(**filter)
+        numberOfBooks = int(request.form['numberOfBooks'])
+        
+        if book and numberOfBooks>=1 and numberOfBooks <= 30:
+            params = {'id':book['id'],'keys':'book_count = ?', 'values': book['book_count'] + numberOfBooks}
+            res = updateBookData(**params)
+            
+            if res:
+                result['code'] = 200
+                result['message'] = "Success Fully Imported" 
+                
+
+
+        else:
+            try:
+                query={'isbn':isbn}
+                response =requests.get("https://frappe.io/api/method/frappe-library", params=query)
+                apiResponseData = response.json()
+                if apiResponseData['message']:
+                    book = apiResponseData['message'][0]
+                    if book is not None:
+                        params = {
+                            'keys':'bookID,title,authors,average_rating,isbn,isbn13,language_code,num_pages,ratings_count,text_reviews_count,publication_date,publisher,book_count', 
+                            'values': [book['bookID'],book['title'],book['authors'],book['average_rating'],book['isbn'],book['isbn13'],book['language_code'],book['  num_pages'],book['ratings_count'],book['text_reviews_count'],book['publication_date'],book['publisher'],numberOfBooks]
+                            }
+                        res = insertBookData(**params)
+                        if res:
+                            result['code'] = 200
+                            result['message'] = "New Book, Success Fully Imported"
+
+            except requests.exceptions.HTTPError as error:
+                return jsonify(error)
+
+    return jsonify(result)
