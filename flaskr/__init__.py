@@ -27,7 +27,7 @@ def create_app(test_config=None):
     # a simple page that says hello
     @app.route('/hello')
     def hello():
-        return 'Hello, World!'
+        return os.path.join(app.instance_path, 'flaskr.sqlite')
 
     from . import db
     db.init_app(app)
