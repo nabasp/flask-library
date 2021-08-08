@@ -42,7 +42,7 @@ def register():
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
-        return "posted"
+        
         username = request.form['username']
         password = request.form['password']
         db = get_db()
@@ -50,7 +50,7 @@ def login():
         user = db.execute(
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
-
+        return "posted"+username
         if user is None:
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):
