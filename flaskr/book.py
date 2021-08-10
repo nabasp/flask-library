@@ -71,6 +71,12 @@ def get_book(key,value):
         book = get_db_dict().execute(sql,(value,)).fetchone()
 
     return book
+def get_all_book():
+    book=None
+    sql = 'SELECT * FROM books'
+    books = get_db_dict().execute(sql).fetchall()
+    
+    return books
 def get_members():
     db = get_db()
     members = db.execute(
@@ -122,8 +128,11 @@ def delete():
 @bp.route('/<string:isbn>/getBook')
 @login_required
 def getBookAjax(isbn):
-    filter = {'key':'isbn', 'value': isbn}
-    book = get_book(**filter)
+    if(isbn=="all"):
+        book = {"data":get_all_book()}
+    else:
+        filter = {'key':'isbn', 'value': isbn}
+        book = get_book(**filter)
        
     return jsonify(book)
 
