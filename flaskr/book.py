@@ -75,6 +75,7 @@ def create():
 
         totalDebit = getTotalDebit(member_id)
         
+        
         totalAmount = totalDebit + total_rent
 
         
@@ -136,7 +137,7 @@ def getTotalDebit(memberId):
         sql = 'SELECT SUM(total_rent) AS totalDebit FROM book_issued WHERE memberID = ? AND  is_returned = ?'
         TotalDebitResult = get_db_dict().execute(sql,(memberId,False)).fetchone()
         if TotalDebitResult:
-            TotalDebit = TotalDebitResult['totalDebit']
+            TotalDebit = TotalDebitResult['totalDebit'] if TotalDebitResult['totalDebit'] else 0
 
     return TotalDebit
 
