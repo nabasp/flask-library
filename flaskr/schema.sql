@@ -2,6 +2,8 @@ DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS members;
 DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS book_issued;
+
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,5 +48,22 @@ CREATE TABLE books (
   publication_date DATE,
   publisher TEXT NOT NULL,
   book_count INTEGER,
+  rent_day FLOAT,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE book_issued (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  bookID INTEGER NOT NULL,
+  memberID INTEGER NOT NULL,
+  rent_day FLOAT,
+  total_rent FLOAT,
+  issued_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  return_date DATE,
+  is_returned BOOLEAN DEFAULT FALSE,
+  note TEXT,
+  extra_charge FLOAT DEFAULT 0,
+  FOREIGN KEY (memberID) REFERENCES members (id),
+  FOREIGN KEY (bookID) REFERENCES books (id)
 );

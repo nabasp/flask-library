@@ -29,39 +29,87 @@ def manage():
     members = get_members()
     return render_template('book/manage.html', members_list=members)
 
-@bp.route('/create', methods=('GET', 'POST'))
+@bp.route('/issue', methods=('POST',))
 @login_required
 def create():
+    result = {'code' : '400' , 'message': 'Error, Method Not Allowed'}
     if request.method == 'POST':
         
-        member_name = request.form['name']
-        member_email = request.form['email']
-        member_phone = request.form['phone']
-        member_dob = request.form['dob']
-        member_gender = request.form['gender']
-        member_status = request.form.get('status')
-        member_address = request.form['address']
-        
+        member_id = request.form['issueMember']
+        book_id = request.form['bookID']
+        book = get_book('bookID',book_id)
+
         
 
-        error = None
+        if not book:
+            result['code'] = 422
+            result['message'] = "Invalid Book" 
+            return jsonify(result)
 
-        if not member_name:
-            error = 'member name is required.'
+        day_rent = float(book['rent_day'])
 
-        if error is not None:
-            flash(error)
+        total_rent = float(request.form['totalRent'])
+        return_date = request.form['returnDate']
+        note = request.form['note']
+
+        bookCount = book['book_count']
+
+        if bookCount <= 0:
+            result['code'] = 422
+            result['message'] = "out of stock" 
+            return jsonify(result)
+        
+        
+        if not member_id:
+            result['code'] = 422
+            result['message'] = "Member is require"
+            return jsonify(result)
+
+        member=get_member_by_id(member_id)
+        
+
+        if not member:
+            result['code'] = 422
+            result['message'] = "Invalid member id"
+            return jsonify(result)
+
+        totalDebit = getTotalDebit(member_id)
+        
+        totalAmount = totalDebit + total_rent
+
+        
+        
+        if  totalAmount >= 500:
+            result['code'] = 422
+            result['message'] = "Debit is More than 500 $ , Member pending rent = " + str(totalDebit) +' $'
+            return jsonify(result)
+
+        issueDetails=getBookIssueData(book_id,member_id)
+        
+        if issueDetails:
+            result['code'] = 422
+            result['message'] = "Already issued to this member on "+issueDetails['issued_date']
+            return jsonify(result)
         else:
             db = get_db()
             db.execute(
-                'INSERT INTO members (name,status,phone,email,dob,gender,address)'
-                ' VALUES (?, ?, ?, ?, ?, ?, ?)',
-                (member_name, member_status, member_phone, member_email, member_dob, member_gender, member_address)
+                'INSERT INTO book_issued (bookID,memberID,rent_day,total_rent,return_date,note)'
+                ' VALUES (?, ?, ?, ?, ?, ? )',
+                (book_id, member_id, day_rent, total_rent, return_date, note)
             )
-            db.commit()
-            return redirect(url_for('book.index'))
+            newStock = bookCount-1 
+            sql = 'UPDATE books SET book_count = ? WHERE id = ?'
+            db.execute(sql,(newStock,book['id']))
 
-    return render_template('book/create.html')
+            db.commit()
+
+            result['code'] = 200
+            result['member'] = member
+            result['book'] = book
+            result['message'] = "Success Fully Issued" 
+            
+
+    return jsonify(result)
 
 def get_book(key,value):
     book=None
@@ -71,12 +119,43 @@ def get_book(key,value):
         book = get_db_dict().execute(sql,(value,)).fetchone()
 
     return book
+
+def getBookIssueData(bookId,memberId):
+    issueDetails=None
+    
+    if(bookId and memberId):
+        sql = 'SELECT * FROM book_issued WHERE memberID = ? AND bookID = ?'
+        issueDetails = get_db_dict().execute(sql,(memberId,bookId)).fetchone()
+
+    return issueDetails
+
+def getTotalDebit(memberId):
+    TotalDebit=0
+    
+    if(memberId):
+        sql = 'SELECT SUM(total_rent) AS totalDebit FROM book_issued WHERE memberID = ? AND  is_returned = ?'
+        TotalDebitResult = get_db_dict().execute(sql,(memberId,False)).fetchone()
+        if TotalDebitResult:
+            TotalDebit = TotalDebitResult['totalDebit']
+
+    return TotalDebit
+
+def get_member_by_id(id):
+    member=None
+    
+    if(id):
+        sql = 'SELECT * FROM members WHERE id = ?'
+        member = get_db_dict().execute(sql,(id)).fetchone()
+
+    return member
+
 def get_all_book():
     book=None
     sql = 'SELECT * FROM books'
     books = get_db_dict().execute(sql).fetchall()
     
     return books
+
 def get_members():
     db = get_db()
     members = db.execute(
@@ -85,36 +164,6 @@ def get_members():
         ' ORDER BY created_at DESC'
     ).fetchall()
     return members
-@bp.route('/update', methods=('GET', 'POST'))
-@login_required
-def update():
-    
-    if request.method == 'POST':
-        member_id = request.form['memberId']
-        member_name = request.form['name']
-        member_email = request.form['email']
-        member_phone = request.form['phone']
-        member_dob = request.form['dob']
-        member_gender = request.form['gender']
-        member_status = request.form.get('status')
-        member_address = request.form['address']
-        error = None
-        if not member_id:
-            error = 'member id is required.'
-
-        if error is not None:
-            flash(error)
-        else:
-            db = get_db()
-            db.execute(
-                'UPDATE members SET name = ?, email = ?, phone = ?, dob = ?,  gender = ?, status = ?, address = ?'
-                ' WHERE id = ?',
-                (member_name, member_email, member_phone, member_dob, member_gender, member_status, member_address,member_id)
-            )
-            db.commit()
-            
-
-    return redirect(url_for('book.manage'))
 
 @bp.route('/delete', methods=('POST',))
 @login_required
@@ -150,7 +199,7 @@ def updateBookData(id,keys,values):
 
 def insertBookData(keys,values):
 
-    sql = 'INSERT INTO books ('+ keys + ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    sql = 'INSERT INTO books ('+ keys + ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     db = get_db()
     db.execute(sql,(values))
     db.commit()
@@ -168,10 +217,14 @@ def importBookAjax(isbn):
         filter = {'key':'isbn', 'value': isbn}
         book = get_book(**filter)
         numberOfBooks = int(request.form['numberOfBooks'])
+        perDayRent = int(request.form['perDayRent'])
         
-        if book and numberOfBooks>=1 and numberOfBooks <= 30:
+        if book and (numberOfBooks>=1 and numberOfBooks <= 30) and perDayRent >0 :
             params = {'id':book['id'],'keys':'book_count = ?', 'values': book['book_count'] + numberOfBooks}
             res = updateBookData(**params)
+            params = {'id':book['id'],'keys':'rent_day = ?', 'values': perDayRent}
+            res = updateBookData(**params)
+            
             
             if res:
                 result['code'] = 200
@@ -188,8 +241,8 @@ def importBookAjax(isbn):
                     book = apiResponseData['message'][0]
                     if book is not None:
                         params = {
-                            'keys':'bookID,title,authors,average_rating,isbn,isbn13,language_code,num_pages,ratings_count,text_reviews_count,publication_date,publisher,book_count', 
-                            'values': [book['bookID'],book['title'],book['authors'],book['average_rating'],book['isbn'],book['isbn13'],book['language_code'],book['  num_pages'],book['ratings_count'],book['text_reviews_count'],book['publication_date'],book['publisher'],numberOfBooks]
+                            'keys':'bookID,title,authors,average_rating,isbn,isbn13,language_code,num_pages,ratings_count,text_reviews_count,publication_date,publisher,book_count,rent_day', 
+                            'values': [book['bookID'],book['title'],book['authors'],book['average_rating'],book['isbn'],book['isbn13'],book['language_code'],book['  num_pages'],book['ratings_count'],book['text_reviews_count'],book['publication_date'],book['publisher'],numberOfBooks,perDayRent]
                             }
                         res = insertBookData(**params)
                         if res:

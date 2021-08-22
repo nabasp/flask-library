@@ -376,14 +376,24 @@ box-shadow: 13px 13px 8px 0px rgba(151, 146, 153,0.6);
           <div class="card">
             <div class="card-body">
               <div class="form-group mb-3 row">
-                <label class="form-label col-6 col-form-label">How many Books Do you want to import</label>
+                <label class="form-label col-2 col-form-label">Rent/Day</label>
+                <div class="col">
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      $
+                    </span>
+                    <input name="day-rent" id="day-rent" type="text" class="form-control" placeholder="rent" value="3" autocomplete="off">
+                  </div>
+                </div>
+                <label class="form-label col-4 col-form-label">How many Books Do you want to import</label>
                 <div class="col">           
                   <input type="number"  id="import-quantity" name="import-quantity" class="form-control" min="0" max="30">
-                  <small class="form-hint">Minum 1 and maximum 30 books per-import please mention in quantity</small>
+                  
                 </div>
                 <div class="col">
                   <button id="import-book-btn" class="btn ladda-button" data-color="blue" data-size="sm" data-style="expand-left" >Import</button>
                 </div>
+                <small class="form-hint">Minum 1 and maximum 30 books per-import please mention in quantity</small>
              </div>
             </div>
           </div>
@@ -431,7 +441,8 @@ box-shadow: 13px 13px 8px 0px rgba(151, 146, 153,0.6);
     $('button#import-book-btn').bind('click', function() {
       isbn=$('#bookIsbn').val();
       numberOfBooks=$('#import-quantity').val();
-      importBooksFromServer(isbn,numberOfBooks);
+      dayRent=$('#day-rent').val();
+      importBooksFromServer(isbn,numberOfBooks,dayRent);
       return false;
     });
   });
@@ -455,19 +466,20 @@ function fetchBookInfoFromDb(isbn) {
           $('#info-num-pages').html(data.num_pages);
           $('#info-ratings-count').html(data.ratings_count);
           $('#info-text-reviews-count').html(data.text_reviews_count);
+          $('#day-rent').val(data.rent_day)
         }
 
         console.log(data);
       });
 }
 
-function importBooksFromServer(isbn,numberOfBooks) {
+function importBooksFromServer(isbn,numberOfBooks,dayRent) {
   var l = Ladda.create( document.getElementById( 'import-book-btn' ) );
 l.start(); // Start Progress bar
 
   let url =SCRIPT_ROOT + isbn +'/importBook';
   let dataType;
-  var data = { numberOfBooks: numberOfBooks };
+  var data = { numberOfBooks: numberOfBooks ,perDayRent :dayRent};
   $.ajax({
   type: "POST",
   url: url,

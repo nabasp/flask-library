@@ -7,41 +7,204 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
 
 
+<!-- Ladda Stylesheet -->
+<link rel="stylesheet" href="http://lab.hakim.se/ladda/dist/ladda.min.css" />
+<!-- Ladda JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Ladda/1.0.0/spin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Ladda/1.0.0/ladda.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Ladda/1.0.0/ladda-themeless.min.css" />
+
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css" rel="stylesheet"/>
 <link href="https://cdn.datatables.net/1.10.25/css/dataTables.semanticui.min.css" rel="stylesheet"/>
 <style>
-  tr.selected{
-    background-color: #bbb;
-  }
+  select.select2-cutom {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 250px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:90%;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#12CBC4;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #12cbc4;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+
 </style>
+
 {% endblock %}
 
 {% block content %}
 <div class="page-body">
   <div class="container-xl">
-    <div class="row g-2 align-items-center mb-n3">
-      
-      
-        <div class="col-6 col-sm-4 col-md-2 col-xl mb-3">
-          <a href="#" class="btn btn-light w-100">
-            Issue Book
-          </a>
-        </div>
-
-        <div class="col-6 col-sm-4 col-md-2 col-xl mb-3">
-          <a href="#" class="btn btn-light w-100">
-            Edit 
-          </a>
-        </div>
-
-        <div class="col-6 col-sm-4 col-md-2 col-xl mb-3">
-          <a href="#" class="btn btn-light w-100">
-            Delete
-          </a>
-        </div>
-      
-      
-    </div>
     <div class="row">
       <div class="col-12">
         
@@ -57,7 +220,8 @@
                     <th>Publication date</th>
                     <th>Rating</th>
                     <th>Stock</th>
-                    <!-- <th>Actions</th> -->
+                    <th>Rent/Day</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tfoot>
@@ -71,7 +235,8 @@
                     <th>Publication date</th>
                     <th>Rating</th>
                     <th>Stock</th>
-                    <!-- <th>Actions</th> -->
+                    <th>Rent/Day</th>
+                    <th>Actions</th>
                 </tr>
             </tfoot>
         </table>
@@ -81,29 +246,266 @@
   </div>
 </div>
 
-<div class="modal modal-blur fade" id="modal-danger" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal modal-blur fade" id="modal-issue-book" tabindex="-1" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Issue Book</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="issueBookIsbn" name="issueBookIsbn">
+        <input type="hidden" id="bookID" name="bookID">
+        
+          <div class="card" id="bookInfo" >
+            <div class="card-body">
+              <table class="table table-vcenter card-table">
+                <thead>
+                  <tr>
+                    <th><strong>Book info</strong>#<span id="issueBookId"></span></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><line x1="3" y1="6" x2="3" y2="19"></line><line x1="12" y1="6" x2="12" y2="19"></line><line x1="21" y1="6" x2="21" y2="19"></line></svg>
+                      Tittle
+                    </td>
+                    <td><strong><span id="issue-tittle"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><line x1="3" y1="6" x2="3" y2="19"></line><line x1="12" y1="6" x2="12" y2="19"></line><line x1="21" y1="6" x2="21" y2="19"></line></svg>
+                      ISBN
+                    </td>
+                    <td><strong><span id="issue-isbn"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><line x1="3" y1="6" x2="3" y2="19"></line><line x1="12" y1="6" x2="12" y2="19"></line><line x1="21" y1="6" x2="21" y2="19"></line></svg>
+                      Rent/Day
+                    </td>
+                    <td>
+                      <div class="col">
+                      <div class="input-group">
+                        <span class="input-group-text">
+                          $
+                        </span>
+                        <input readonly name="issue-day-rent" id="issue-day-rent" type="text" class="form-control" placeholder="rent" value="3" autocomplete="off">
+                      </div>
+                    </div>
+                  </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="margin-top:1%;">
+                <div class="mb-3">
+                  <div class="btn-group w-100">
+                    <button type="button" class="btn btn-primary">Stock</button>
+                    <button type="button" class="btn">Available :<span id="issue-book-count"></span></button>
+                    </div>
+                </div>
+              </div>
+              
+              
+            </div>
+          </div>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="mb-3">
+              <label class="form-label">Member name</label>
+              <select class="select2-cutom" name="issue-member" id="issue-member">
+                <option>Select a member</option>
+                {% for member in members_list %}
+                <option value="{{member['id']}}">{{member['name']}}</option>
+                {% endfor %}
+            </select>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="mb-3">
+              <label class="form-label">Returning date</label>
+              <input type="date" class="form-control" name="returnDate" id="returnDate">
+            </div>
+          </div>
+          <div class="col-lg-12">
+            <div>
+              <label class="form-label">Additional information</label>
+              <textarea class="form-control" rows="3" id="note" name="note"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+          Cancel
+        </a>
+        <button id="issue-book-btn" class="btn ladda-button" data-color="blue" data-size="sm" data-style="expand-left" >Issue</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal modal-blur fade" id="modal-team" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content" style="border: 1px dotted #2fb344;">
+      <div class="modal-header">
+        <h5 class="modal-title">Import Book <span id="bookId"></span> </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <div class="modal-body">
+          <input type="hidden" id="bookIsbn" name="bookIsbn">
+          <div class="card" id="bookInfo" >
+            <div class="card-body">
+              <table class="table table-vcenter card-table">
+                <thead>
+                  <tr>
+                    <th><strong>Stock info</strong></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><line x1="3" y1="6" x2="3" y2="19"></line><line x1="12" y1="6" x2="12" y2="19"></line><line x1="21" y1="6" x2="21" y2="19"></line></svg>
+                      Tittle
+                    </td>
+                    <td><strong><span id="info-tittle"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><line x1="3" y1="6" x2="3" y2="19"></line><line x1="12" y1="6" x2="12" y2="19"></line><line x1="21" y1="6" x2="21" y2="19"></line></svg>
+                      ISBN
+                    </td>
+                    <td><strong><span id="info-isbn"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path><line x1="3" y1="6" x2="3" y2="19"></line><line x1="12" y1="6" x2="12" y2="19"></line><line x1="21" y1="6" x2="21" y2="19"></line></svg>
+                      ISBN13
+                    </td>
+                    <td> <strong><span id="info-isbn13"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2"></path><line x1="12" y1="12" x2="12" y2="12.01"></line><path d="M3 13a20 20 0 0 0 18 0"></path></svg>
+                      Author
+                    </td>
+                    <td> <strong><span id="info-authors"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><polyline points="5 12 3 12 12 3 21 12 19 12"></polyline><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path></svg>
+                      Publisher
+                    </td>
+                    <td><strong><span id="info-publisher"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="11" r="3"></circle><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"></path></svg>
+                      language-code 
+                    </td>
+                    <td><strong><span id="info-language-code" class="flag flag-country-si"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><rect x="4" y="5" width="16" height="16" rx="2"></rect><line x1="16" y1="3" x2="16" y2="7"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="4" y1="11" x2="20" y2="11"></line><line x1="11" y1="15" x2="12" y2="15"></line><line x1="12" y1="15" x2="12" y2="18"></line></svg>
+                      Publication date
+                    </td>
+                    <td><strong><span id="info-publication-date"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 15"></polyline></svg>
+                      Average rating
+                    </td>
+                    <td><strong><span id="info-average-rating"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 15"></polyline></svg>
+                      Number of pages
+                    </td>
+                    <td><strong><span id="info-num-pages"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 15"></polyline></svg>
+                      Ratings count
+                    </td>
+                    <td><strong><span id="info-ratings-count"></span></strong></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 15"></polyline></svg>
+                      Text reviews count
+                    </td>
+                    <td><strong><span id="info-text-reviews-count"></span></strong></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="margin-top:1%;">
+                <div class="mb-3">
+                  <div class="btn-group w-100">
+                    <button type="button" class="btn btn-primary">Stock</button>
+                    <button type="button" class="btn">Available :<span id="info-book-count"></span></button>
+                    <button type="button" class="btn">Total Issued :<span id="info-book-count"></span></button>
+                  </div>
+                </div>
+              </div>
+              
+              
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="form-group mb-3 row">
+                <label class="form-label col-2 col-form-label">Rent/Day</label>
+                <div class="col">
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      $
+                    </span>
+                    <input name="day-rent" id="day-rent" type="text" class="form-control" placeholder="rent" value="3" autocomplete="off">
+                  </div>
+                </div>
+                <label class="form-label col-4 col-form-label">How many Books Do you want to import</label>
+                <div class="col">           
+                  <input type="number"  id="import-quantity" name="import-quantity" class="form-control" min="0" max="30">
+                  
+                </div>
+                <div class="col">
+                  <button id="import-book-btn" class="btn ladda-button" data-color="blue" data-size="sm" data-style="expand-left" >Import</button>
+                </div>
+                <small class="form-hint">Minum 1 and maximum 30 books per-import please mention in quantity</small>
+             </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save & Close</button>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="modal modal-blur fade" id="modal-success" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
     <div class="modal-content">
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      <div class="modal-status bg-danger"></div>
+      <div class="modal-status bg-success"></div>
       <div class="modal-body text-center py-4">
-        <!-- Download SVG icon from http://tabler-icons.io/i/alert-triangle -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v2m0 4v.01" /><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" /></svg>
-        <h3>Are you sure?</h3>
-        <div class="text-muted">Do you really want to remove this member? What you've done cannot be undone.</div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-green icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2l4 -4"></path></svg>
+        <h3>Import succedeed</h3>
+        <div class="text-muted">Your Import of <strong><span id="book-imported"></span></strong> has been successfully Imported.</div>
       </div>
       <div class="modal-footer">
         <div class="w-100">
           <div class="row">
-            <div class="col"><botton class="btn btn-white w-100" data-bs-dismiss="modal">
-                Cancel
-              </botton></div>
-            <div class="col">
-              <form action="{{ url_for('member.delete')}}" method="post">
-                <input type="hidden" id="delMemberId" name="delMemberId">
-                <input class="btn btn-danger w-100"  type="submit" value="Delete">
-              </form>
-              </div>
+            
+            <div class="col"><a href="#" class="btn btn-success w-100" data-bs-dismiss="modal">
+                Ok
+              </a></div>
           </div>
         </div>
       </div>
@@ -111,108 +513,26 @@
   </div>
 </div>
 
-<div class="modal modal-blur fade" id="modal-member-edit" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+<div class="modal modal-blur fade" id="success-book-issue" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Update Member</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-status bg-success"></div>
+      <div class="modal-body text-center py-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-green icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2l4 -4"></path></svg>
+        <h3>Success Fully Issued</h3>
+        <div class="text-muted"> <strong><span id="book-name"></span></strong> has been successfully issued to <strong><span id="member-name"></span></strong>.</div>
       </div>
-        <form id="member-edit-form" method="POST" action="{{ url_for('member.update') }}">
-          <input type="hidden" id="memberId" name="memberId" value="">
-          <div class="modal-body">
-              <div class="form-group mb-3 row">
-                <label class="form-label col-3 col-form-label">Name</label>
-                <div class="col">
-                  <input id="name" name="name" type="text" class="form-control" placeholder="Enter Name">
-                </div>
-              </div>
-              <div class="form-group mb-3 row">
-                <label class="form-label col-3 col-form-label">Phone number</label>
-                <div class="col">
-                  <input id="phone" name="phone" type="tel" class="form-control" autocomplete="off">
-                </div>
-              </div>
-              <div class="form-group mb-3 row">
-                <label class="form-label col-3 col-form-label">Email address</label>
-                <div class="col">
-                  <input id="email" name="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
-                  <small class="form-hint">We'll never share your email with anyone else.</small>
-                </div>
-              </div>
-              <div class="form-group mb-3 row">
-                <label class="form-label col-3 col-form-label">Date Of Birth</label>
-                <div class="col">
-                  <div class="input-icon">
-                    <span class="input-icon-addon"><!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><rect x="4" y="5" width="16" height="16" rx="2"></rect><line x1="16" y1="3" x2="16" y2="7"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="4" y1="11" x2="20" y2="11"></line><line x1="11" y1="15" x2="12" y2="15"></line><line x1="12" y1="15" x2="12" y2="18"></line></svg>
-                    </span>
-                    <input id="dob" name="dob" class="form-control" placeholder="Select a date" id="datepicker-icon-prepend" >
-                  </div>
-                </div>
-              </div>
-              <div class="form-group mb-3 row">
-                <label class="form-label col-3 col-form-label">Gender</label>
-                <div class="col">
-                  <div class="form-selectgroup">
-                    <label class="form-selectgroup-item">
-                      <input type="radio" id="gender" name="gender" value="m" class="form-selectgroup-input" checked="">
-                      <span class="form-selectgroup-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-man" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                          <circle cx="12" cy="5" r="2"></circle>
-                          <path d="M10 22v-5l-1 -1v-4a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4l-1 1v5"></path>
-                      </svg>
-                        Male</span>
-                    </label>
-                    <label class="form-selectgroup-item">
-                      <input type="radio" id="gender" name="gender" value="f" class="form-selectgroup-input">
-                      <span class="form-selectgroup-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-woman" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                          <circle cx="12" cy="5" r="2"></circle>
-                          <path d="M10 22v-4h-2l2 -6a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1l2 6h-2v4"></path>
-                      </svg>
-                        Female</span>
-                    </label>
-                    <label class="form-selectgroup-item">
-                      <input type="radio" id="gender" name="gender" value="o" class="form-selectgroup-input">
-                      <span class="form-selectgroup-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle></svg>
-                        Other</span>
-                    </label>
-                  </div>
-                </div>
-                
-              </div>
-              <div class="form-group mb-3 row">
-                <label class="form-label col-3 col-form-label">Address</label>
-                <div class="col">
-                  <textarea class="form-control" id="address" name="address" rows="6" placeholder="Address.."></textarea>
-                </div>
-              </div>
-              <div class="form-group mb-3 row">
-                <label class="form-label col-3 col-form-label">Status</label>
-                <div class="col">
-                  <label class="form-check form-switch">
-                    <input id="status" name="status" class="form-check-input" type="checkbox" checked="">
-                  </label>
-                </div>
-              </div>
+      <div class="modal-footer">
+        <div class="w-100">
+          <div class="row">
+            
+            <div class="col"><a href="#" class="btn btn-success w-100" data-bs-dismiss="modal">
+                Ok
+              </a></div>
           </div>
-          <div class="modal-footer">
-            <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
-              Cancel
-            </a>
-            <button type="submit" class="btn btn-success ms-auto">
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M5 12l5 5l10 -10"></path>
-             </svg>
-              Save
-            </button>
-          </div>
-        </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -220,47 +540,78 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='dist/libs/litepicker/dist/litepicker.js')}}"></script>
 <script type=text/javascript>
-  // document.addEventListener("DOMContentLoaded", function () {
-  //   window.Litepicker && (new Litepicker({
-  //     element: document.getElementById('dob'),
-  //     buttonText: {
-  //       previousMonth: '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg>',
-  //       nextMonth: '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg>',
-  //     },
-  //   }));
-  // });
+  
   SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
-  // $(function() {
-  //   $('a#edit-member').bind('click', function() {
-  //     memberId=$(this).attr("data-memberId");
-  //     $('#memberId').val(memberId);
-  //     $.getJSON(SCRIPT_ROOT + memberId +'/edit', function(data) {
-  //       console.log(data);
-  //       $("#name").val(data.name);
-  //       $("#dob").val(data.dob);
-  //       $("#email").val(data.email);
-  //       $("#status").prop("checked", data.status?true:false);
-  //       values =[data.gender];
-  //       $(".form-selectgroup-item").find('[value=' + values.join('], [value=') + ']').prop("checked", true);
-        
-  //       $("#phone").val(data.phone);
-  //       $("#address").val(data.address);
-  //     });
-  //     return false;
-  //   });
+  
 
-  //   $('a#delete-member').bind('click', function() {
-  //     memberId=$(this).attr("data-memberId");
-  //     $('#delMemberId').val(memberId);
-  //     return false;
-  //   });
- 
-  // });
+
+
+  function fetchBookInfoFromDb(isbn) {
+      $('#bookIsbn').val(isbn);
+      $("#bookId").html(" #New");
+      $("#bookInfo").addClass("d-none");
+      $.getJSON(SCRIPT_ROOT + isbn +'/getBook', function(data) {
+        if(data){
+          $("#bookInfo").removeClass("d-none");
+          $("#bookId").html("<a href='"+SCRIPT_ROOT+data.bookID+"'> #"+data.bookID+"</a>");
+          $('#info-tittle').html(data.title);
+          $('#info-authors').html(data.authors);
+          $('#info-average-rating').html(data.average_rating);
+          $('#info-isbn').html(data.isbn);
+          $('#info-isbn13').html(data.isbn13);
+          $('#info-publication-date').html(data.publication_date);
+          $('#info-publisher').html(data.publisher);
+          $('#info-book-count').html(data.book_count);
+          $('#info-num-pages').html(data.num_pages);
+          $('#info-ratings-count').html(data.ratings_count);
+          $('#info-text-reviews-count').html(data.text_reviews_count);
+          $('#day-rent').val(data.rent_day)
+        }
+        $('#modal-team').modal('show');
+        console.log(data);
+      });
+}
+
+
+function bookIssueForm(isbn) {
+  setBookInfoFromDb(isbn);
+  $('#modal-issue-book').modal('show');
+  
+}
+
+function setBookInfoFromDb(isbn) {
+      $('#issueBookIsbn').val(isbn);
+      $.getJSON(SCRIPT_ROOT + isbn +'/getBook', function(data) {
+        if(data){
+          $("#issueBookId").html("<a href='"+SCRIPT_ROOT+data.bookID+"'> #"+data.bookID+"</a>");
+          $('#bookID').val(data.bookID)
+          $('#issue-tittle').html(data.title);
+          $('#issue-isbn').html(data.isbn);
+          $('#issue-book-count').html(data.book_count);
+          $('#issue-day-rent').val(data.rent_day)
+        }
+        console.log(data);
+      });
+}
 
   $(document).ready(function() {
  
   var table = $('#example').DataTable( {
+    columnDefs: [{
+       targets: 10,
+       render: function(data, type, full, meta){
+          if(type === 'display'){
+            isbn="'"+data+"'";
+             data =  '<div class="btn-list flex-nowrap">' +
+                 '<button class="btn editBook" onClick="fetchBookInfoFromDb('+isbn+')">Edit</button> ' +
+                 '<button class="btn issueBook" onClick="bookIssueForm('+isbn+')" >Issue</buton> ' +
+                 '</div>';                     
+          }
+
+          return data;
+       }
+    }],
         scrollY:        true,
         scrollX:        true,
         "ajax":{
@@ -277,21 +628,233 @@
             { "data": "publication_date" },
             { "data": "average_rating" },
             { "data": "book_count" },
+            { "data": "rent_day" },
+            { "data": "isbn" },
         ]
     } );
-    $('#example tbody').on( 'click', 'tr', function () {
-        if ( $(this).hasClass('selected') ) {
-            $(this).removeClass('selected');
-        }
-        else {
-            table.$('tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
-    } );
+    
+    
 
-} );
+    $('button#import-book-btn').bind('click', function() {
+      isbn=$('#bookIsbn').val();
+      numberOfBooks=$('#import-quantity').val();
+      dayRent=$('#day-rent').val();
+      importBooksFromServer(isbn,numberOfBooks,dayRent);
+      return false;
+    });
+
+    function importBooksFromServer(isbn,numberOfBooks,dayRent) {
+  var l = Ladda.create( document.getElementById( 'import-book-btn' ) );
+l.start(); // Start Progress bar
+
+  let url =SCRIPT_ROOT + isbn +'/importBook';
+  let dataType;
+  var data = { numberOfBooks: numberOfBooks,perDayRent :dayRent };
+  $.ajax({
+  type: "POST",
+  url: url,
+  data: data,
+  success: function(result) {
+    console.log(result)
+    if(result.code==200){
+    $('#book-imported').html(numberOfBooks);
+    $('#modal-success').modal('show');
+    fetchBookInfoFromDb(isbn)
+    table.ajax.reload();
+    }else{
+      alert("Error, "+result.message);
+    }
+  },
+  dataType: dataType
+}).always(
+            function() {
+              l.stop(); // Stop Progress bar
+            }
+    );
+
+}
 
 
   
+  $('button#issue-book-btn').bind('click', function() {
+    bookID=$('#bookID').val();
+      numberOfBooks=$('#import-quantity').val();
+      issueMember=$('#issue-member').val();
+      returnDate=$('#returnDate').val();
+      note=$('#note').val();
+
+
+      dayRent=$('#issue-day-rent').val();
+
+      
+
+      const start = new Date();
+      const end = new Date(returnDate);
+      diff  = new Date(end - start),
+      days  = Math.round(diff/1000/60/60/24);
+
+      if(days<=0)
+        alert("Invalid Return Date, please select date grater than today ")
+
+      totalRent=days*dayRent;
+
+      if(totalRent>=500){
+        alert("total rent exeed !,please change the return day")
+        return false;
+      }
+
+      issueBooks(bookID,issueMember,returnDate,note,totalRent);
+      return false;
+    });
+
+    function issueBooks(bookID,issueMember,returnDate,note,totalRent) {
+  var l = Ladda.create( document.getElementById( 'import-book-btn' ) );
+l.start(); // Start Progress bar
+
+  let url =SCRIPT_ROOT +'issue';
+  let dataType;
+  var data = { bookID: bookID, issueMember :issueMember, returnDate:returnDate ,note:note, totalRent:totalRent};
+  $.ajax({
+  type: "POST",
+  url: url,
+  data: data,
+  success: function(result) {
+    console.log(result)
+    if(result.code==200){
+    $('#book-name').html(result.book.title);
+    $('#member-name').html(result.member.name);
+    $('#modal-issue-book').modal('hide');
+    $('#success-book-issue').modal('show');
+    table.ajax.reload();
+    }else{
+      alert(result.message,'Error!')
+    }
+  },
+  dataType: dataType
+}).always(
+            function() {
+              l.stop(); // Stop Progress bar
+            }
+    );
+
+}
+
+
+  });
+
+
+
+ 
+  
 </script>
+
+<!-- Select2 JS -->
+<script>
+function create_custom_dropdowns() {
+    $('.select2-cutom').each(function (i, select) {
+        if (!$(this).next().hasClass('dropdown-select')) {
+            $(this).after('<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0"><span class="current"></span><div class="list"><ul></ul></div></div>');
+            var dropdown = $(this).next();
+            var options = $(select).find('option');
+            var selected = $(this).find('option:selected');
+            dropdown.find('.current').html(selected.data('display-text') || selected.text());
+            options.each(function (j, o) {
+                var display = $(o).data('display-text') || '';
+                dropdown.find('ul').append('<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>');
+            });
+        }
+    });
+
+    $('.dropdown-select ul').before('<div class="dd-search"><input id="txtSearchValue" autocomplete="off" onkeyup="filter()" class="dd-searchbox" type="text"></div>');
+}
+
+// Event listeners
+
+// Open/close
+$(document).on('click', '.dropdown-select', function (event) {
+    if($(event.target).hasClass('dd-searchbox')){
+        return;
+    }
+    $('.dropdown-select').not($(this)).removeClass('open');
+    $(this).toggleClass('open');
+    if ($(this).hasClass('open')) {
+        $(this).find('.option').attr('tabindex', 0);
+        $(this).find('.selected').focus();
+    } else {
+        $(this).find('.option').removeAttr('tabindex');
+        $(this).focus();
+    }
+});
+
+// Close when clicking outside
+$(document).on('click', function (event) {
+    if ($(event.target).closest('.dropdown-select').length === 0) {
+        $('.dropdown-select').removeClass('open');
+        $('.dropdown-select .option').removeAttr('tabindex');
+    }
+    event.stopPropagation();
+});
+
+function filter(){
+    var valThis = $('#txtSearchValue').val();
+    $('.dropdown-select ul > li').each(function(){
+     var text = $(this).text();
+        (text.toLowerCase().indexOf(valThis.toLowerCase()) > -1) ? $(this).show() : $(this).hide();         
+   });
+};
+// Search
+
+// Option click
+$(document).on('click', '.dropdown-select .option', function (event) {
+    $(this).closest('.list').find('.selected').removeClass('selected');
+    $(this).addClass('selected');
+    var text = $(this).data('display-text') || $(this).text();
+    $(this).closest('.dropdown-select').find('.current').text(text);
+    $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+});
+
+// Keyboard events
+$(document).on('keydown', '.dropdown-select', function (event) {
+    var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+    // Space or Enter
+    //if (event.keyCode == 32 || event.keyCode == 13) {
+    if (event.keyCode == 13) {
+        if ($(this).hasClass('open')) {
+            focused_option.trigger('click');
+        } else {
+            $(this).trigger('click');
+        }
+        return false;
+        // Down
+    } else if (event.keyCode == 40) {
+        if (!$(this).hasClass('open')) {
+            $(this).trigger('click');
+        } else {
+            focused_option.next().focus();
+        }
+        return false;
+        // Up
+    } else if (event.keyCode == 38) {
+        if (!$(this).hasClass('open')) {
+            $(this).trigger('click');
+        } else {
+            var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+            focused_option.prev().focus();
+        }
+        return false;
+        // Esc
+    } else if (event.keyCode == 27) {
+        if ($(this).hasClass('open')) {
+            $(this).trigger('click');
+        }
+        return false;
+    }
+});
+
+$(document).ready(function () {
+    create_custom_dropdowns();
+});
+      
+</script>
+
 {% endblock %}
