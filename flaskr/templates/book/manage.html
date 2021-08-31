@@ -199,6 +199,11 @@
 }
 
 </style>
+<style>
+  tr, th {
+    font-size: 1em !important;
+}
+</style>
 
 {% endblock %}
 
@@ -693,8 +698,10 @@ l.start(); // Start Progress bar
       diff  = new Date(end - start),
       days  = Math.round(diff/1000/60/60/24);
 
-      if(days<=0)
-        alert("Invalid Return Date, please select date grater than today ")
+      if(days<=0){
+        alert("Invalid Return Date, atleast grater than one day")
+        return false;
+      }
 
       totalRent=days*dayRent;
 

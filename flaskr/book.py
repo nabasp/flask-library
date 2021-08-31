@@ -29,6 +29,11 @@ def manage():
     members = get_members()
     return render_template('book/manage.html', members_list=members)
 
+@bp.route('/issuedBooks')
+@login_required
+def issuedBooks():
+    return render_template('book/issuedBooks.html')
+
 @bp.route('/issue', methods=('POST',))
 @login_required
 def create():
@@ -121,12 +126,18 @@ def get_book(key,value):
 
     return book
 
-def getBookIssueData(bookId,memberId):
+def getBookIssueData(bookId,memberId,fetchAll=0,isReturned=[]):
     issueDetails=None
     
     if(bookId and memberId):
         sql = 'SELECT * FROM book_issued WHERE memberID = ? AND bookID = ?'
         issueDetails = get_db_dict().execute(sql,(memberId,bookId)).fetchone()
+    elif fetchAll:
+        sql = 'SELECT * FROM book_issued LEFT JOIN members ON book_issued.memberID = members.id LEFT JOIN books ON book_issued.bookID = books.bookID'
+        issueDetails = get_db_dict().execute(sql).fetchall()
+    elif fetchAll and isReturned:
+        sql = 'SELECT * FROM book_issued WHERE'
+        issueDetails = get_db_dict().execute(sql(isReturned['status'])).fetchall()
 
     return issueDetails
 
@@ -207,6 +218,13 @@ def insertBookData(keys,values):
 
     return True     
 
+@bp.route('/getIssueDatas',methods=('GET', 'POST'))
+@login_required
+def getIssueDatas():
+    booksIssued = {"data":getBookIssueData(0,0,1,[])}
+  
+    return jsonify(booksIssued)
+
 @bp.route('/<string:isbn>/importBook',methods=('POST',))
 @login_required
 def importBookAjax(isbn):
@@ -219,8 +237,16 @@ def importBookAjax(isbn):
         book = get_book(**filter)
         numberOfBooks = int(request.form['numberOfBooks'])
         perDayRent = int(request.form['perDayRent'])
-        
-        if book and (numberOfBooks>=1 and numberOfBooks <= 30) and perDayRent >0 :
+
+        if (numberOfBooks < 0 or numberOfBooks > 300):
+            result = {'code' : '422' , 'message': 'number Of Books must b/w 1-300'}
+            return jsonify(result)
+
+        if perDayRent<=0 or perDayRent>=500:
+            result = {'code' : '422' , 'message': 'per Day Rent must b/w 0-500'}
+            return jsonify(result)
+
+        if book:
             params = {'id':book['id'],'keys':'book_count = ?', 'values': book['book_count'] + numberOfBooks}
             res = updateBookData(**params)
             params = {'id':book['id'],'keys':'rent_day = ?', 'values': perDayRent}

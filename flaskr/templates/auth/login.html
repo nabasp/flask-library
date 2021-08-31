@@ -12,6 +12,11 @@
     <form class="card card-md" method="POST" autocomplete="off">
       <div class="card-body">
         <h2 class="card-title text-center mb-4">Login to your account</h2>
+        {% for message in get_flashed_messages() %}
+        <div class="mb-3">
+          <div class="text-red bg-light" data-demo-color="">{{ message }}</div>
+        </div>
+        {% endfor %}
         <div class="mb-3">
           <label class="form-label">User Name</label>
           <input name="username" id="username" type="text" class="form-control" placeholder="Enter username">

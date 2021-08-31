@@ -14,9 +14,7 @@
     <link href="{{ url_for('static', filename='dist/css/demo.min.css')}}" rel="stylesheet"/>
     {% block header %}{% endblock %}
   </head>
-{% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-{% endfor %}
+
 <body class="antialiased border-top-wide border-primary d-flex flex-column">
   {% block content %}{% endblock %}
   <script src="{{ url_for('static', filename='dist/js/tabler.min.js')}}"></script>
