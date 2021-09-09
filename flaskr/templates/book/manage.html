@@ -206,7 +206,16 @@
 </style>
 
 {% endblock %}
-
+{% block pageTitle %}
+Books
+{% endblock %}
+{% block pageTitleBtn %}
+<div class="col-auto ms-auto">
+  <a href="{{ url_for('book.index') }}" class="btn btn-outline-primary active w-100">
+    + Import Books
+  </a>
+</div>
+{% endblock %}
 {% block content %}
 <div class="page-body">
   <div class="container-xl">

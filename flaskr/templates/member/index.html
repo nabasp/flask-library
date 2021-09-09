@@ -2,6 +2,17 @@
 
 {% block header %}
 {% endblock %}
+{% block pageTitle %}
+Member
+{% endblock %}
+{% block pageTitleBtn %}
+<div class="col-auto ms-auto">
+  <a href="{{ url_for('member.create') }}" class="btn btn-outline-primary active w-100">
+    + Add new Member
+  </a>
+</div>
+{% endblock %}
+
 
 {% block content %}
 <div class="page-body">
