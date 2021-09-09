@@ -222,7 +222,6 @@
                     <th>ISBN</th>
                     <th>Language</th>
                     <th>Publisher</th>
-                    <th>Publication date</th>
                     <th>Rating</th>
                     <th>Stock</th>
                     <th>Rent/Day</th>
@@ -237,7 +236,6 @@
                     <th>ISBN</th>
                     <th>Language</th>
                     <th>publisher</th>
-                    <th>Publication date</th>
                     <th>Rating</th>
                     <th>Stock</th>
                     <th>Rent/Day</th>
@@ -604,7 +602,7 @@ function setBookInfoFromDb(isbn) {
  
   var table = $('#example').DataTable( {
     columnDefs: [{
-       targets: 10,
+       targets: 9,
        render: function(data, type, full, meta){
           if(type === 'display'){
             isbn="'"+data+"'";
@@ -630,7 +628,6 @@ function setBookInfoFromDb(isbn) {
             { "data": "isbn" },
             { "data": "language_code" },
             { "data": "publisher" },
-            { "data": "publication_date" },
             { "data": "average_rating" },
             { "data": "book_count" },
             { "data": "rent_day" },
