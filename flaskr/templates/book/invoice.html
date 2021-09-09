@@ -1,0 +1,106 @@
+{% extends 'dashboard-base.html' %}
+
+{% block header %}
+
+{% endblock %}
+{% block pageTitle %}
+Invoice
+{% endblock %}
+{% block pageTitleBtn %}
+<div class="col-auto ms-auto d-print-none">
+    <button type="button" class="btn btn-primary" onclick="javascript:window.print();">
+      <!-- Download SVG icon from http://tabler-icons.io/i/printer -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" /><path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" /><rect x="7" y="13" width="10" height="8" rx="2" /></svg>
+      Print Invoice
+    </button>
+</div>
+{% endblock %}
+{% block content %}
+<div class="page-body">
+    
+    <div class="container-xl">
+      <div class="card card-lg">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-6">
+              <p class="h3">Company</p>
+              <address>
+                Street Address<br>
+                State, City<br>
+                Region, Postal Code<br>
+                ltd@example.com
+              </address>
+            </div>
+            <div class="col-6 text-end">
+              <p class="h3">Member</p>
+              <address>
+                {{ data.name }}<br>
+                {{ data.address }}<br>
+                {{ data.email }}
+              </address>
+            </div>
+            <div class="col-12 my-5">
+              <h1>Invoice INV/{{data.issueId}}</h1>
+            </div>
+          </div>
+          <table class="table table-transparent table-responsive">
+            <thead>
+              <tr>
+                <th class="text-center" style="width: 1%"></th>
+                <th>Book</th>
+                <th style="width: 1%">Returned</th>
+                <th style="width: 2%">From Date</th>
+                <th style="width: 2%">To Date</th>
+                <th class="text-center" style="width: 1%">Days</th>
+                <th class="text-end" style="width: 1%">Rent/day</th>
+                <th class="text-end" style="width: 1%">Amount</th>
+              </tr>
+            </thead>
+            <tr>
+              <td class="text-center">1</td>
+              <td>
+                <p class="strong mb-1">{{ data.title }}</p>
+              </td>
+              <td class="text-center">
+                {% if data.is_returned %}
+                <span class="badge bg-green-lt">Yes</span>
+                {% else %}
+                <span class="badge bg-red-lt">No</span>
+                {% endif %}
+              </td>
+              <td class="text-center">
+                {{ data.fromDate }}
+              </td>
+              <td class="text-center">
+                {{ data.toDate }}
+              </td>
+              <td class="text-center">
+                {{ data.noOfDays }}
+              </td>
+              <td class="text-end">{{ data.rent_day }}</td>
+              <td class="text-end">{{ data.total_rent }}</td>
+            </tr>
+            <tr>
+              <td colspan="7" class="strong text-end">Subtotal</td>
+              <td class="text-end">{{ data.total_rent }}</td>
+            </tr>
+            <tr>
+              <td colspan="7" class="strong text-end">Extra Due</td>
+              <td class="text-end">{{ data.extra_charge }}</td>
+            </tr>
+            <tr>
+              <td colspan="7" class="font-weight-bold text-uppercase text-end">Total Due</td>
+              <td class="font-weight-bold text-end">{{ data.total  }}</td>
+            </tr>
+          </table>
+          <p class="text-muted text-center mt-5">Thank you very much for doing business with us. We look forward to working with
+            you again!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

@@ -7,6 +7,8 @@ from werkzeug.exceptions import abort
 from flaskr.auth import login_required
 from flaskr.db import get_db,get_db_dict
 
+from datetime import datetime
+
 bp = Blueprint('book', __name__,url_prefix='/book')
 
 @bp.route('/', methods=('GET', 'POST'))
@@ -33,6 +35,22 @@ def manage():
 @login_required
 def issuedBooks():
     return render_template('book/issuedBooks.html')
+
+@bp.route('/<int:issueId>/invoice',methods=('GET', 'POST'))
+@login_required
+def showInvoice(issueId):
+    booksIssued = getBookIssueData(0,0,0,{},issueId)
+    if(booksIssued):
+        issueDate = datetime.strptime(booksIssued['issued_date'], '%Y-%m-%d %H:%M:%S').date()
+        returnDate = datetime.strptime(booksIssued['return_date'], '%Y-%m-%d').date()
+        booksIssued['fromDate'] = issueDate
+        booksIssued['toDate'] = returnDate
+        deltaDays = returnDate - issueDate
+        booksIssued['noOfDays']=deltaDays.days
+        booksIssued['total']=booksIssued['total_rent']+booksIssued['extra_charge']
+
+
+    return render_template('book/invoice.html',data = booksIssued)
 
 @bp.route('/issue', methods=('POST',))
 @login_required
@@ -126,18 +144,29 @@ def get_book(key,value):
 
     return book
 
-def getBookIssueData(bookId,memberId,fetchAll=0,isReturned=[]):
-    issueDetails=None
+def getBookIssueData(bookId,memberId,fetchAll=0,isReturned={},issueId=0):
     
-    if(bookId and memberId):
-        sql = 'SELECT * FROM book_issued WHERE memberID = ? AND bookID = ?'
+    issueDetails=None
+    if issueId:
+        if isReturned:
+            returnedStatus = isReturned['status']
+            sql = 'SELECT book_issued.id as issueId,* FROM book_issued LEFT JOIN members ON book_issued.memberID = members.id LEFT JOIN books ON book_issued.bookID = books.bookID WHERE issueId = ? AND is_returned = ?'
+            issueDetails = get_db_dict().execute(sql,(issueId,returnedStatus)).fetchone()
+        else:
+            sql = 'SELECT book_issued.id as issueId,* FROM book_issued LEFT JOIN members ON book_issued.memberID = members.id LEFT JOIN books ON book_issued.bookID = books.bookID WHERE issueId = ?'
+            issueDetails = get_db_dict().execute(sql,(issueId,)).fetchone()
+        
+
+    elif(bookId and memberId):
+        sql = 'SELECT book_issued.id as issueId,* FROM book_issued WHERE memberID = ? AND bookID = ?'
         issueDetails = get_db_dict().execute(sql,(memberId,bookId)).fetchone()
-    elif fetchAll:
-        sql = 'SELECT * FROM book_issued LEFT JOIN members ON book_issued.memberID = members.id LEFT JOIN books ON book_issued.bookID = books.bookID'
-        issueDetails = get_db_dict().execute(sql).fetchall()
     elif fetchAll and isReturned:
-        sql = 'SELECT * FROM book_issued WHERE'
-        issueDetails = get_db_dict().execute(sql(isReturned['status'])).fetchall()
+        returnedStatus = isReturned['status']
+        sql = 'SELECT book_issued.id as issueId,* FROM  book_issued LEFT JOIN members ON book_issued.memberID = members.id LEFT JOIN books ON book_issued.bookID = books.bookID WHERE book_issued.is_returned = ?'
+        issueDetails = get_db_dict().execute(sql,(returnedStatus,)).fetchall()
+    elif fetchAll:
+        sql = 'SELECT book_issued.id as issueId,* FROM book_issued LEFT JOIN members ON book_issued.memberID = members.id LEFT JOIN books ON book_issued.bookID = books.bookID'
+        issueDetails = get_db_dict().execute(sql).fetchall()
 
     return issueDetails
 
@@ -221,7 +250,14 @@ def insertBookData(keys,values):
 @bp.route('/getIssueDatas',methods=('GET', 'POST'))
 @login_required
 def getIssueDatas():
-    booksIssued = {"data":getBookIssueData(0,0,1,[])}
+    booksIssued = {"data":getBookIssueData(0,0,1)}
+  
+    return jsonify(booksIssued)
+
+@bp.route('/<int:id>/getIssueDatasById',methods=('GET', 'POST'))
+@login_required
+def getIssueData(id):
+    booksIssued = getBookIssueData(0,0,0,{'status':0},id)
   
     return jsonify(booksIssued)
 
@@ -278,5 +314,49 @@ def importBookAjax(isbn):
 
             except requests.exceptions.HTTPError as error:
                 return jsonify(error)
+
+    return jsonify(result)
+@bp.route('/return', methods=('POST',))
+@login_required
+def bookReturn():
+    result = {'code' : '400' , 'message': 'Error, Method Not Allowed'}
+    if request.method == 'POST':
+        
+        extraCharge = float(request.form['extraCharge'])
+        issueID = request.form['issueID']
+        issueDetails = getBookIssueData(0,0,0,{'status':0},issueID)
+
+        
+
+        if not issueDetails:
+            result['code'] = 422
+            result['message'] = "Invalid issue id" 
+            return jsonify(result)
+
+        bookID = issueDetails['bookID']
+        member = issueDetails['name']
+        book = issueDetails['title']
+
+
+        total_rent = float(issueDetails['total_rent'])
+        return_date = request.form['returnDate']
+        note = request.form['note']
+
+        
+        
+        
+        totalAmount = float(extraCharge) + total_rent
+        db = get_db()
+        sql = 'UPDATE book_issued SET is_returned = 1 ,extra_charge = ?,return_date = ? ,note = ? WHERE id = ?'
+        db.execute(sql,(extraCharge,return_date,note,issueID))
+        sql = 'UPDATE books SET book_count = book_count + 1 WHERE bookID = ?'
+        db.execute(sql,(bookID,))
+        db.commit()
+
+        result['code'] = 200
+        result['member'] = member
+        result['book'] = book
+        result['message'] = "Success Fully Returned" 
+            
 
     return jsonify(result)

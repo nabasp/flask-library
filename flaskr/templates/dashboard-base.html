@@ -131,8 +131,8 @@
                         <a class="dropdown-item" href="{{ url_for('book.index') }}" >
                           Import
                         </a>
-                        <a class="dropdown-item" href="{{ url_for('book.create') }}" >
-                          Create
+                        <a class="dropdown-item" href="{{ url_for('book.issuedBooks') }}" >
+                          Issued
                         </a>
                         <a class="dropdown-item" href="{{ url_for('book.manage') }}" >
                           Manage
@@ -291,9 +291,10 @@
                 Overview
               </div>
               <h2 class="page-title">
-                Navbar sticky
+                {% block pageTitle %}{% endblock %}
               </h2>
             </div>
+            {% block pageTitleBtn %}{% endblock %}
           </div>
         </div>
       </div>

@@ -322,7 +322,7 @@
             <div class="mb-3">
               <label class="form-label">Member name</label>
               <select class="select2-cutom" name="issue-member" id="issue-member">
-                <option>Select a member</option>
+                <option value=0 >Select a member</option>
                 {% for member in members_list %}
                 <option value="{{member['id']}}">{{member['name']}}</option>
                 {% endfor %}
@@ -696,7 +696,12 @@ l.start(); // Start Progress bar
       const start = new Date();
       const end = new Date(returnDate);
       diff  = new Date(end - start),
-      days  = Math.round(diff/1000/60/60/24);
+      days  = Math.ceil(diff/1000/60/60/24);
+
+      if(issueMember==0){
+        alert("Please select a member")
+        return false;
+      }
 
       if(days<=0){
         alert("Invalid Return Date, atleast grater than one day")
